@@ -2,5 +2,14 @@ test-job:
   script:
     - echo "This is my first job"
     - date
-    - ping google.com -c 4 
+
+build-job:
+  image: node
+  script:
+    - echo "Begin testing"
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - "build/"
 
