@@ -1,23 +1,41 @@
 stages:
   - build
+  - test
   - deploy
 
-test-job:
-  stage: build
-  script:
-    - echo "This is my first job"
-    - date
 
 build-job:
   stage: build
   image: node
   script:
-    - echo "Begin testing"
+    - echo "Begin building"
     - npm install
     - npm run build
   artifacts:
     paths:
       - "build/"
+
+
+lint-job:
+  stage: test
+  dependencies: []
+  image: node
+  script:
+    - echo "This is my test job"
+    - npm install markdownlint-cli2 --global           # Install markdownlint into the container
+    - markdownlint-cli2 -v                             # Verify the version, useful for troubleshooting
+    - markdownlint-cli2 "blog/**/*.md" "docs/**/*.md"  
+  allow_failure: true
+
+test-html:
+  stage: test
+  image: node
+  dependencies:
+    - build-job        # Only fetch artifacts from `build-job`
+  script:
+    - npm install --save-dev htmlhint                  # Install HTMLHint into the container
+    - npx htmlhint --version                           # Verify the version, useful for troubleshooting
+    - npx htmlhint build/                              # Lint all markdown files in blog/ and docs/
 
 
 pages:
