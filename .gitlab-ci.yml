@@ -1,9 +1,15 @@
+stages:
+  - build
+  - deploy
+
 test-job:
+  stage: build
   script:
     - echo "This is my first job"
     - date
 
 build-job:
+  stage: build
   image: node
   script:
     - echo "Begin testing"
@@ -13,3 +19,11 @@ build-job:
     paths:
       - "build/"
 
+
+pages:
+  stage: deploy
+  script:
+    mv build/ public/
+  artifacts:
+    paths:
+      - "public/"
